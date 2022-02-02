@@ -43,7 +43,7 @@ def _load_settings() -> SettingsDict:
     settings = _settings_path()
     if settings.exists():
         try:
-            with open(settings, "r") as fh:
+            with open(settings) as fh:
                 data.update(json.load(fh))
         except Exception:  # pragma: no cover
             settings.unlink()

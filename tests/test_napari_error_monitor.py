@@ -1,11 +1,11 @@
 from platform import platform
-import napari
+from unittest.mock import MagicMock, patch
 
 import pytest
-from napari_error_monitor._opt_in_widget import OptInWidget
-from napari_error_monitor import get_sample_event, _ask_opt_in, install_error_monitor
+
 import napari_error_monitor
-from unittest.mock import MagicMock, patch
+from napari_error_monitor import _ask_opt_in, get_sample_event, install_error_monitor
+from napari_error_monitor._opt_in_widget import OptInWidget
 
 
 @pytest.fixture(autouse=True)
@@ -68,5 +68,5 @@ def test_install():
         napari_error_monitor._save_settings({"enabled": True, "with_locals": True})
         install_error_monitor()
         mock.assert_called_once()
-    
+
         assert napari_error_monitor.INSTALLED

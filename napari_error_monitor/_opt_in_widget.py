@@ -1,18 +1,20 @@
 from pprint import pformat
+
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QApplication,
-    QSizePolicy,
     QCheckBox,
     QDialog,
     QDialogButtonBox,
-    QVBoxLayout,
     QHBoxLayout,
     QLabel,
     QMainWindow,
+    QSizePolicy,
     QTextEdit,
+    QVBoxLayout,
     QWidget,
 )
+
 from ._util import get_sample_event
 
 

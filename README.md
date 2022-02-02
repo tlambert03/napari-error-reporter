@@ -421,7 +421,7 @@ information.  Here is an example exception event:
 
 </details>
 
-## Install 
+## Install
 
 ```sh
 pip install napari-error-monitor
