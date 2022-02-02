@@ -35,7 +35,7 @@ class OptInWidget(QDialog):
 
     def _setup_ui(self):
         btn_box = QDialogButtonBox()
-        btn = btn_box.addButton(
+        btn_box.addButton(
             "Yes, send my bug reports to napari", QDialogButtonBox.AcceptRole
         )
         no = btn_box.addButton(
@@ -88,11 +88,11 @@ class OptInWidget(QDialog):
         self.layout().addWidget(self.txt)
 
         w = QWidget()
-        l = QHBoxLayout()
-        l.addWidget(self.send_locals)
-        l.addWidget(_lbl)
-        l.setContentsMargins(0, 0, 0, 0)
-        w.setLayout(l)
+        layout = QHBoxLayout()
+        layout.addWidget(self.send_locals)
+        layout.addWidget(_lbl)
+        layout.setContentsMargins(0, 0, 0, 0)
+        w.setLayout(layout)
         self.layout().addWidget(w)
         self.layout().addWidget(btn_box)
         self.layout().addWidget(_lbl2)

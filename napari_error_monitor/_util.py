@@ -7,7 +7,7 @@ import sentry_sdk
 try:
     from rich import print as pprint
 except ImportError:  # pragma: no cover
-    from pprint import pprint  # type: ignore
+    from pprint import pprint
 
 try:
     from napari import __version__ as napari_version
@@ -125,9 +125,9 @@ def get_sample_event(**kwargs):
             # remove locals that wouldn't really be there
             del settings, _trans, kwargs, client, EVENT
             try:
-                some_variable = 1
-                another_variable = "my_string"
-                x = 1 / 0
+                some_variable = 1  # noqa
+                another_variable = "my_string"  # noqa
+                1 / 0
             except Exception:
                 with sentry_sdk.push_scope() as scope:
                     for k, v in _get_tags().items():
@@ -136,7 +136,8 @@ def get_sample_event(**kwargs):
                     hub.capture_exception()
     try:
         # remove the mock hub from the event
-        del EVENT["exception"]["values"][0]["stacktrace"]["frames"][-1]["vars"]["hub"]
+        frames = EVENT["exception"]["values"][0]["stacktrace"]["frames"]  # type: ignore
+        del frames[-1]["vars"]["hub"]
     except (KeyError, IndexError):
         pass
 
