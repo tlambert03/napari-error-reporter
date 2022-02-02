@@ -19,7 +19,7 @@ from ._util import get_sample_event
 
 
 class OptInWidget(QDialog):
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent=None, with_locals=False) -> None:
         if parent is None:
             app = QApplication.instance()
             for i in app.topLevelWidgets():
@@ -31,6 +31,7 @@ class OptInWidget(QDialog):
         self._no = False
 
         self._setup_ui()
+        self.send_locals.setChecked(with_locals)
         self._update_example()
 
     def _setup_ui(self):
@@ -66,7 +67,6 @@ class OptInWidget(QDialog):
         self.txt.setReadOnly(True)
 
         self.send_locals = QCheckBox("Include local variables")
-        self.send_locals.setChecked(False)
         self.send_locals.stateChanged.connect(self._update_example)
         self.send_locals.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         _lbl = QLabel(

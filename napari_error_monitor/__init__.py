@@ -8,29 +8,31 @@ import json
 from pathlib import Path
 from typing import Optional, TypedDict
 
+import appdirs
 import sentry_sdk
 
-from ._util import SENTRY_DSN, SENTRY_SETTINGS, _get_tags, get_sample_event
+from ._opt_in_widget import OptInWidget
+from ._util import SENTRY_SETTINGS, _get_tags, get_sample_event
 
 INSTALLED = False
 
 
 __all__ = [
-    "capture_exception",
-    "SENTRY_DSN",
-    "SENTRY_SETTINGS",
-    "install_error_monitor",
+    "ask_opt_in",
     "capture_exception",
     "get_sample_event",
+    "install_error_monitor",
+    "OptInWidget",
+    "settings_path",
 ]
 
 capture_exception = sentry_sdk.capture_exception
 
 
-def _settings_path() -> Path:  # pragma: no cover
-    from napari.utils._appdirs import user_data_dir
-
-    return Path(user_data_dir()) / "error_reporting.json"
+def settings_path() -> Path:
+    """Return the path used for napari-error-monitor settings."""
+    data = appdirs.user_data_dir("napari", False)
+    return Path(data) / "error_reporting.json"
 
 
 class SettingsDict(TypedDict):
@@ -39,8 +41,8 @@ class SettingsDict(TypedDict):
 
 
 def _load_settings() -> SettingsDict:
-    data: SettingsDict = {"enabled": None, "with_locals": True}
-    settings = _settings_path()
+    data: SettingsDict = {"enabled": None, "with_locals": False}
+    settings = settings_path()
     if settings.exists():
         try:
             with open(settings) as fh:
@@ -51,20 +53,31 @@ def _load_settings() -> SettingsDict:
 
 
 def _save_settings(settings: SettingsDict):
-    dest = _settings_path()
+    dest = settings_path()
     dest.parent.mkdir(exist_ok=True, parents=True)
     with open(dest, "w") as fh:
         json.dump(settings, fh)
 
 
-def _ask_opt_in() -> SettingsDict:
+def ask_opt_in(force=False) -> SettingsDict:
+    """Show the dialog asking the user to opt in.
+
+    Parameters
+    ----------
+    force : bool, optional
+        If True, will show opt_in even if user has already opted in/out,
+        by default False.
+
+    Returns
+    -------
+    SettingsDict
+        [description]
+    """
     settings = _load_settings()
-    if settings.get("enabled") is not None:
+    if not force and settings.get("enabled") is not None:
         return settings
 
-    from ._opt_in_widget import OptInWidget
-
-    dlg = OptInWidget()
+    dlg = OptInWidget(with_locals=settings["with_locals"])
     send: Optional[bool] = None
     if bool(dlg.exec()):
         send = True  # pragma: no cover
@@ -77,10 +90,12 @@ def _ask_opt_in() -> SettingsDict:
 
 
 def install_error_monitor():
+    """Initialize the error monitor with sentry.io"""
     global INSTALLED
     if INSTALLED:
         return  # pragma: no cover
-    settings = _ask_opt_in()
+
+    settings = ask_opt_in()
     if not settings.get("enabled"):
         return
 
