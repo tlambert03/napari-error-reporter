@@ -78,7 +78,7 @@ class OptInWidget(QDialog):
 
         _lbl2 = QLabel(
             "<small><em>you may change your settings at any time in the "
-            "napari preferences window.</em></small>"
+            "Help menu.</em></small>"
         )
         _lbl2.setStyleSheet("color: #999;")
         _lbl2.setAlignment(Qt.AlignmentFlag.AlignRight)

@@ -14,7 +14,7 @@ napari.
 
 The first time you run napari after installing this plugin an opt-in
 notification will appear (Be sure to click "yes", otherwise no reports will be
-collected or sent).  You may opt back out at any time in napari's preferences.
+collected or sent).  You may opt back out at any time in napari's help menu.
 
 Every effort is made to strip these reports of personally identifiable
 information.  Here is an example exception event:
