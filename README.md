@@ -421,6 +421,12 @@ information.  Here is an example exception event:
 
 </details>
 
+*note: in the opt-in dialog, there is a checkbox labeled "include local variables",
+checking this will include the value of variables in the local scope when an exception
+occurs.  While these can be very useful when interpreting a bug report, they may
+occasionally include local file path strings.  If that concerns you, please leave this
+box unchecked*
+
 ## Install
 
 ```sh
