@@ -1,6 +1,10 @@
 import os
 import platform
 from contextlib import suppress
+from datetime import datetime
+from typing import Optional, Set, TypedDict
+from urllib.error import URLError
+from urllib.request import urlopen
 
 import sentry_sdk
 
@@ -18,6 +22,21 @@ SENTRY_DSN = "https://a265f1a2a6254d6e8c32c3da6f75fe95@o100671.ingest.sentry.io/
 SHOW_HOSTNAME = os.getenv("NAPARI_TELEMETRY_SHOW_HOSTNAME", "0") in ("1", "True")
 SHOW_LOCALS = os.getenv("NAPARI_TELEMETRY_SHOW_LOCALS", "1") in ("1", "True")
 DEBUG = bool(os.getenv("NAPARI_TELEMETRY_DEBUG"))
+
+
+class SettingsDict(TypedDict):
+    enabled: Optional[bool]
+    with_locals: bool
+    admins: Set[str]
+    date: datetime
+
+
+_DEFAULT_SETTINGS: SettingsDict = {
+    "enabled": None,
+    "with_locals": False,
+    "admins": set(),
+    "date": datetime.now(),
+}
 
 
 def strip_sensitive_data(event: dict, hint: dict):
@@ -143,3 +162,14 @@ def get_sample_event(**kwargs) -> dict:
         pass
 
     return EVENT
+
+
+def _try_get_admins() -> Optional[Set[str]]:
+    """Retrieve list of current admins"""
+    U = "https://raw.githubusercontent.com/tlambert03/napari-error-reporter/main/ADMINS"
+    try:
+        with urlopen(U) as response:
+            content: str = response.read().decode()
+            return {line for line in content.splitlines() if not line.startswith("#")}
+    except URLError:  # pragma: no cover
+        return None

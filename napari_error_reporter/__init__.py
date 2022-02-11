@@ -3,16 +3,23 @@ try:
 except ImportError:  # pragma: no cover
     __version__ = "unknown"
 
-
 import json
+from datetime import datetime
 from pathlib import Path
-from typing import Optional, TypedDict
+from typing import Optional, cast
 
 import appdirs
 import sentry_sdk
 
 from ._opt_in_widget import OptInWidget
-from ._util import SENTRY_SETTINGS, _get_tags, get_sample_event
+from ._util import (
+    _DEFAULT_SETTINGS,
+    SENTRY_SETTINGS,
+    SettingsDict,
+    _get_tags,
+    _try_get_admins,
+    get_sample_event,
+)
 
 INSTALLED = False
 
@@ -40,28 +47,36 @@ def settings_path() -> Path:
     return Path(data) / "error_reporting.json"
 
 
-class SettingsDict(TypedDict):
-    enabled: Optional[bool]
-    with_locals: bool
-
-
 def _load_settings() -> SettingsDict:
-    data: SettingsDict = {"enabled": None, "with_locals": False}
+    data: SettingsDict = _DEFAULT_SETTINGS
     settings = settings_path()
     if settings.exists():
         try:
             with open(settings) as fh:
-                data.update(json.load(fh))
+                _data = json.load(fh)
+                if "date" in _data:
+                    try:
+                        _data["date"] = datetime.fromisoformat(_data["date"])
+                    except Exception:  # pragma: no cover
+                        _data["date"] = datetime.now()
+                else:  # pragma: no cover
+                    _data["date"] = datetime.now()
+                data.update(_data)
         except Exception:  # pragma: no cover
             settings.unlink()
+    data["admins"] = set(data["admins"])
     return data
 
 
 def _save_settings(settings: SettingsDict):
     dest = settings_path()
     dest.parent.mkdir(exist_ok=True, parents=True)
+    _settings = cast(dict, settings.copy())
+    _settings["admins"] = list(settings["admins"])  # cast to list for serialization
+    _settings["date"] = settings["date"].isoformat()  # cast to string
+
     with open(dest, "w") as fh:
-        json.dump(settings, fh)
+        json.dump(_settings, fh)
 
 
 def ask_opt_in(force=False) -> SettingsDict:
@@ -79,17 +94,35 @@ def ask_opt_in(force=False) -> SettingsDict:
         [description]
     """
     settings = _load_settings()
-    if not force and settings.get("enabled") is not None:
-        return settings
+    current_admins = _try_get_admins()
+    admins_have_changed = bool(
+        current_admins and settings["admins"] and current_admins != settings["admins"]
+    )
 
-    dlg = OptInWidget(with_locals=settings["with_locals"])
-    send: Optional[bool] = None
+    if not force:
+        if settings.get("enabled") is False:
+            # if they've previously responded "No", bail here.
+            return settings
+        elif settings.get("enabled") and not admins_have_changed:
+            # if they've previously responded "Yes"
+            # and `force` is not True (to force showing the prompt again)
+            # and the admins haven't changed since the last acceptance
+            # then don't ask again.
+            return settings
+
+    # otherwise, update admins in the settings and show the widget
+    if current_admins is not None:
+        settings["admins"] = current_admins
+
+    dlg = OptInWidget(settings=settings, admins_have_changed=admins_have_changed)
+    enabled: Optional[bool] = None
     if bool(dlg.exec()):
-        send = True  # pragma: no cover
+        enabled = True  # pragma: no cover
     elif dlg._no:
-        send = False  # pragma: no cover
+        enabled = False  # pragma: no cover
 
-    settings.update({"enabled": send, "with_locals": dlg.send_locals.isChecked()})
+    lcls = dlg.send_locals.isChecked()
+    settings.update({"enabled": enabled, "with_locals": lcls, "date": datetime.now()})
     _save_settings(settings)
     return settings
 

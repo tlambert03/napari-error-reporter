@@ -1,3 +1,4 @@
+import re
 from pprint import pformat
 
 from qtpy.QtCore import Qt
@@ -15,11 +16,16 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from ._util import get_sample_event
+from ._util import _DEFAULT_SETTINGS, SettingsDict, get_sample_event
 
 
 class OptInWidget(QDialog):
-    def __init__(self, parent=None, with_locals=False) -> None:
+    def __init__(
+        self,
+        settings: SettingsDict = _DEFAULT_SETTINGS,
+        admins_have_changed: bool = False,
+        parent=None,
+    ) -> None:
         if parent is None:
             app = QApplication.instance()
             for i in app.topLevelWidgets():
@@ -30,11 +36,11 @@ class OptInWidget(QDialog):
         self._mock_initialized = False
         self._no = False
 
-        self._setup_ui()
-        self.send_locals.setChecked(with_locals)
+        self._setup_ui(settings, admins_have_changed)
+        self.send_locals.setChecked(settings.get("with_locals", False))
         self._update_example()
 
-    def _setup_ui(self):
+    def _setup_ui(self, settings: SettingsDict, admins_have_changed: bool):
         btn_box = QDialogButtonBox()
         btn_box.addButton(
             "Yes, send my bug reports to napari", QDialogButtonBox.AcceptRole
@@ -47,18 +53,32 @@ class OptInWidget(QDialog):
         btn_box.accepted.connect(self.accept)
         btn_box.rejected.connect(self.reject)
 
-        info = QLabel(
-            """<h2>napari error reporter</h2>
-            <br><br>
-            You have installed <em>napari-error-reporter</em>.<br><br>
-            Would you like to help us improve napari by automatically sending
-            bug reports when an error is detected in napari?
-            <br><br>
-            Reports are collected via <a href="https://sentry.io/">Sentry.io</a>
-            <br><br>
-            Here is an example error log that would be sent from your system:
-            """
+        ads = []
+        for i in settings["admins"]:
+            match = re.search(r"(.+) \(@(.+)\)", i)
+            if match:
+                name, username = match.groups()
+                ads.append(
+                    f'<a style="color: #6495ED;" '
+                    f'href="https://github.com/{username}">{name}</a>'
+                )
+        _ads = ", ".join(ads)
+        _ads = f"These admins have access: {_ads}"
+        if admins_have_changed:
+            _ads = f'<strong style="color:red;">CHANGE</strong> {_ads}'
+
+        _info = """<h2>You have installed <em>napari-error-reporter</em></h2>
+        <br><br>
+        Would you like to help us improve napari by automatically sending
+        bug reports (via <a style="color: #6495ED;" href="https://sentry.io/">
+        Sentry.io</a>) when an error is detected in napari?
+        <br><br>{}<br><br>
+        Here is an example error log that would be sent from your system:
+        """.format(
+            _ads
         )
+
+        info = QLabel(_info)
         info.setWordWrap(True)
         info.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
         info.setOpenExternalLinks(True)
@@ -96,11 +116,19 @@ class OptInWidget(QDialog):
         self.layout().addWidget(w)
         self.layout().addWidget(btn_box)
         self.layout().addWidget(_lbl2)
-        self.resize(720, 740)
+        self.resize(660, 600)
 
     def _set_no(self):
         self._no = True
 
     def _update_example(self):
         event = get_sample_event(with_locals=self.send_locals.isChecked())
-        self.txt.setText(pformat(event, indent=2, width=120))
+
+        try:
+            import yaml
+
+            estring = yaml.safe_dump(event, indent=4, width=120)
+        except Exception:
+            estring = pformat(event, indent=2, width=120)
+
+        self.txt.setText(estring)
