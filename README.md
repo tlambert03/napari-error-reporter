@@ -441,3 +441,5 @@ Currently the following napari core developers have access to these reports:
 
 - Juan Nunez-Iglesias ([@jni](https://github.com/jni))
 - Talley Lambert ([@tlambert03](https://github.com/tlambert03))
+
+If that list changes in the future, you will be asked to opt-in again in napari
