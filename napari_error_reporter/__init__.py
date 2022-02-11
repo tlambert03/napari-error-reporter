@@ -13,6 +13,7 @@ import sentry_sdk
 
 from ._opt_in_widget import OptInWidget
 from ._util import (
+    _DEFAULT_SETTINGS,
     SENTRY_SETTINGS,
     SettingsDict,
     _get_tags,
@@ -46,14 +47,6 @@ def settings_path() -> Path:
     return Path(data) / "error_reporting.json"
 
 
-_DEFAULT_SETTINGS: SettingsDict = {
-    "enabled": None,
-    "with_locals": False,
-    "admins": set(),
-    "date": datetime.now(),
-}
-
-
 def _load_settings() -> SettingsDict:
     data: SettingsDict = _DEFAULT_SETTINGS
     settings = settings_path()
@@ -64,9 +57,9 @@ def _load_settings() -> SettingsDict:
                 if "date" in _data:
                     try:
                         _data["date"] = datetime.fromisoformat(_data["date"])
-                    except Exception:
+                    except Exception:  # pragma: no cover
                         _data["date"] = datetime.now()
-                else:
+                else:  # pragma: no cover
                     _data["date"] = datetime.now()
                 data.update(_data)
         except Exception:  # pragma: no cover

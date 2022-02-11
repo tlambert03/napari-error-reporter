@@ -16,13 +16,13 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from ._util import SettingsDict, get_sample_event
+from ._util import _DEFAULT_SETTINGS, SettingsDict, get_sample_event
 
 
 class OptInWidget(QDialog):
     def __init__(
         self,
-        settings: SettingsDict,
+        settings: SettingsDict = _DEFAULT_SETTINGS,
         admins_have_changed: bool = False,
         parent=None,
     ) -> None:

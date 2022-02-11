@@ -31,6 +31,14 @@ class SettingsDict(TypedDict):
     date: datetime
 
 
+_DEFAULT_SETTINGS: SettingsDict = {
+    "enabled": None,
+    "with_locals": False,
+    "admins": set(),
+    "date": datetime.now(),
+}
+
+
 def strip_sensitive_data(event: dict, hint: dict):
     # modify event here
 
@@ -163,5 +171,5 @@ def _try_get_admins() -> Optional[Set[str]]:
         with urlopen(U) as response:
             content: str = response.read().decode()
             return {line for line in content.splitlines() if not line.startswith("#")}
-    except URLError:
+    except URLError:  # pragma: no cover
         return None
