@@ -48,9 +48,9 @@ class OptInWidget(QDialog):
         btn_box.rejected.connect(self.reject)
 
         info = QLabel(
-            """<h3>napari error reporting</h3>
+            """<h2>napari error reporter</h2>
             <br><br>
-            You have installed <em>napari-error-reportering</em>.<br><br>
+            You have installed <em>napari-error-reporter</em>.<br><br>
             Would you like to help us improve napari by automatically sending
             bug reports when an error is detected in napari?
             <br><br>
@@ -77,8 +77,8 @@ class OptInWidget(QDialog):
         _lbl.setStyleSheet("color: #999;")
 
         _lbl2 = QLabel(
-            "<small><em>you may change your settings at any time in the "
-            "Help menu.</em></small>"
+            "You may opt out at any time with <em>Bug reporting opt in/out...</em>"
+            " in the Help menu."
         )
         _lbl2.setStyleSheet("color: #999;")
         _lbl2.setAlignment(Qt.AlignmentFlag.AlignRight)
