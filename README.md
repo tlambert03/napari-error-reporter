@@ -1,4 +1,4 @@
-# napari-error-reporter
+# :bug: napari-error-reporter
 
 [![License](https://img.shields.io/pypi/l/napari-error-reporter.svg?color=green)](https://github.com/tlambert03/napari-error-reporter/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-error-reporter.svg?color=green)](https://pypi.org/project/napari-error-reporter)
@@ -434,3 +434,10 @@ pip install napari-error-reporter
 ```
 
 Thank you!!
+
+## Who can see these bug reports?
+
+Currently the following napari core developers have access to these reports:
+
+- Juan Nunez-Iglesias ([@jni](https://github.com/jni))
+- Talley Lambert ([@tlambert03](https://github.com/tlambert03))
