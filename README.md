@@ -437,9 +437,17 @@ Thank you!!
 
 ## Who can see these bug reports?
 
-Currently the following napari core developers have access to these reports:
+Even with the multiple layers of opt-ins, and the attempts to wipe all personal info
+prior to sending reports, we understand that privacy is always a concern.
+
+Only the following napari core developers have access to these reports.
+If [this](https://raw.githubusercontent.com/tlambert03/napari-error-reporter/main/ADMINS)
+list changes in the future, you will be asked to opt-in again in napari:
 
 - Juan Nunez-Iglesias ([@jni](https://github.com/jni))
 - Talley Lambert ([@tlambert03](https://github.com/tlambert03))
 
-If that list changes in the future, you will be asked to opt-in again in napari
+Any napari github issues resulting from bug reports will be manually purged of
+file paths and local variables.
+
+*This plugin is **not** associated with the Chan Zuckerberg Initiative*.
