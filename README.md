@@ -1,4 +1,4 @@
-# :bug: napari-error-reporter
+# 🐛 napari-error-reporter
 
 [![License](https://img.shields.io/pypi/l/napari-error-reporter.svg?color=green)](https://github.com/tlambert03/napari-error-reporter/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-error-reporter.svg?color=green)](https://pypi.org/project/napari-error-reporter)
