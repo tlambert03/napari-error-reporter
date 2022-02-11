@@ -15,11 +15,16 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from ._util import get_sample_event
+from ._util import SettingsDict, get_sample_event
 
 
 class OptInWidget(QDialog):
-    def __init__(self, parent=None, with_locals=False) -> None:
+    def __init__(
+        self,
+        current_settings: SettingsDict,
+        admins_have_changed: bool = False,
+        parent=None,
+    ) -> None:
         if parent is None:
             app = QApplication.instance()
             for i in app.topLevelWidgets():
@@ -31,7 +36,7 @@ class OptInWidget(QDialog):
         self._no = False
 
         self._setup_ui()
-        self.send_locals.setChecked(with_locals)
+        self.send_locals.setChecked(current_settings.get("with_locals", False))
         self._update_example()
 
     def _setup_ui(self):
