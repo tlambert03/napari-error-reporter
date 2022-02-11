@@ -1,10 +1,10 @@
-# napari-error-monitor
+# napari-error-reporter
 
-[![License](https://img.shields.io/pypi/l/napari-error-monitor.svg?color=green)](https://github.com/tlambert03/napari-error-monitor/raw/main/LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/napari-error-monitor.svg?color=green)](https://pypi.org/project/napari-error-monitor)
-[![Python Version](https://img.shields.io/pypi/pyversions/napari-error-monitor.svg?color=green)](https://python.org)
-[![CI](https://github.com/tlambert03/napari-error-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/tlambert03/napari-error-monitor/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/tlambert03/napari-error-monitor/branch/main/graph/badge.svg)](https://codecov.io/gh/tlambert03/napari-error-monitor)
+[![License](https://img.shields.io/pypi/l/napari-error-reporter.svg?color=green)](https://github.com/tlambert03/napari-error-reporter/raw/main/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/napari-error-reporter.svg?color=green)](https://pypi.org/project/napari-error-reporter)
+[![Python Version](https://img.shields.io/pypi/pyversions/napari-error-reporter.svg?color=green)](https://python.org)
+[![CI](https://github.com/tlambert03/napari-error-reporter/actions/workflows/ci.yml/badge.svg)](https://github.com/tlambert03/napari-error-reporter/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/tlambert03/napari-error-reporter/branch/main/graph/badge.svg)](https://codecov.io/gh/tlambert03/napari-error-reporter)
 
 Want to help out napari?  Install this plugin!
 
@@ -54,11 +54,11 @@ information.  Here is an example exception event:
                     'frames': [
                         {
                             'context_line': '                x = 1 / 0',
-                            'filename': 'napari_error_monitor/_util.py',
+                            'filename': 'napari_error_reporter/_util.py',
                             'function': 'get_sample_event',
                             'in_app': True,
                             'lineno': 130,
-                            'module': 'napari_error_monitor._util',
+                            'module': 'napari_error_reporter._util',
                             'post_context': [
                                 '            except Exception:',
                                 '                with sentry_sdk.push_scope() as scope:',
@@ -212,7 +212,7 @@ information.  Here is an example exception event:
         'napari-aicsimageio': '0.4.1',
         'napari-console': '0.0.4',
         'napari-dv': '0.2.7.dev0+g54e1691.d20220128',
-        'napari-error-monitor': '0.1.dev1+g1b388f2.d20220201',
+        'napari-error-reporter': '0.1.dev1+g1b388f2.d20220201',
         'napari-hello': '0.0.1',
         'napari-math': '0.0.1a0',
         'napari-micromanager': '0.0.1rc6.dev14+g5149788.d20220128',
@@ -424,7 +424,7 @@ information.  Here is an example exception event:
 ## Install
 
 ```sh
-pip install napari-error-monitor
+pip install napari-error-reporter
 ```
 
 Thank you!!

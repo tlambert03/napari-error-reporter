@@ -50,7 +50,7 @@ class OptInWidget(QDialog):
         info = QLabel(
             """<h3>napari error reporting</h3>
             <br><br>
-            You have installed <em>napari-error-monitoring</em>.<br><br>
+            You have installed <em>napari-error-reportering</em>.<br><br>
             Would you like to help us improve napari by automatically sending
             bug reports when an error is detected in napari?
             <br><br>

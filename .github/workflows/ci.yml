@@ -40,7 +40,7 @@ jobs:
         env:
           PLATFORM: ${{ matrix.platform }}
         with:
-          run: pytest --color=yes --cov=napari_error_monitor --cov-report=xml
+          run: pytest --color=yes --cov=napari_error_reporter --cov-report=xml
 
       - name: Coverage
         uses: codecov/codecov-action@v2

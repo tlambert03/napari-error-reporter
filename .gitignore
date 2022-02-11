@@ -104,4 +104,4 @@ ENV/
 # IDE settings
 .vscode/
 
-napari_error_monitor/_version.py
+napari_error_reporter/_version.py
