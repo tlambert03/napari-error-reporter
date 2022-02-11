@@ -102,22 +102,26 @@ def ask_opt_in(force=False) -> SettingsDict:
     """
     settings = _load_settings()
     current_admins = _try_get_admins()
-    offline = current_admins is None
-    admins_have_changed = False if offline else current_admins != settings["admins"]
+    admins_have_changed = bool(
+        current_admins and settings["admins"] and current_admins != settings["admins"]
+    )
 
-    # if they've previously responded
-    # and `force` is not True (to force showing the prompt again)
-    # and the admins haven't changed since the last acceptance
-    # then don't ask again.
-    if settings.get("enabled") is not None and not force and not admins_have_changed:
-        return settings
+    if not force:
+        if settings.get("enabled") is False:
+            # if they've previously responded "No", bail here.
+            return settings
+        elif settings.get("enabled") and not admins_have_changed:
+            # if they've previously responded "Yes"
+            # and `force` is not True (to force showing the prompt again)
+            # and the admins haven't changed since the last acceptance
+            # then don't ask again.
+            return settings
 
+    # otherwise, update admins in the settings and show the widget
     if current_admins is not None:
         settings["admins"] = current_admins
 
-    dlg = OptInWidget(
-        current_settings=settings, admins_have_changed=admins_have_changed
-    )
+    dlg = OptInWidget(settings=settings, admins_have_changed=admins_have_changed)
     enabled: Optional[bool] = None
     if bool(dlg.exec()):
         enabled = True  # pragma: no cover
