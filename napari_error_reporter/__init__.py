@@ -20,17 +20,22 @@ INSTALLED = False
 __all__ = [
     "ask_opt_in",
     "capture_exception",
+    "capture_message",
+    "add_breadcrumb",
     "get_sample_event",
-    "install_error_monitor",
+    "install_error_reporter",
     "OptInWidget",
     "settings_path",
 ]
 
+
 capture_exception = sentry_sdk.capture_exception
+capture_message = sentry_sdk.capture_message
+add_breadcrumb = sentry_sdk.add_breadcrumb
 
 
 def settings_path() -> Path:
-    """Return the path used for napari-error-monitor settings."""
+    """Return the path used for napari-error-reporter settings."""
     data = appdirs.user_data_dir("napari", False)
     return Path(data) / "error_reporting.json"
 
@@ -89,8 +94,8 @@ def ask_opt_in(force=False) -> SettingsDict:
     return settings
 
 
-def install_error_monitor():
-    """Initialize the error monitor with sentry.io"""
+def install_error_reporter():
+    """Initialize the error reporter with sentry.io"""
     global INSTALLED
     if INSTALLED:
         return  # pragma: no cover

@@ -1,4 +1,4 @@
-* napari-error-monitor version:
+* napari-error-reporter version:
 * Python version:
 * Operating System:
 
