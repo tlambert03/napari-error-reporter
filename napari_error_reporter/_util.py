@@ -74,7 +74,7 @@ def is_editable_install(dist_name: str) -> bool:
     return all(loc not in root for loc in installed_paths)
 
 
-def try_get_git_sha(dist_name: str) -> str:
+def try_get_git_sha(dist_name: str = "napari") -> str:
     """Try to return a git sha, for `dist_name` and detect if dirty.
 
     Return empty string on failure.
@@ -82,16 +82,16 @@ def try_get_git_sha(dist_name: str) -> str:
     try:
         ff = metadata.distribution(dist_name).locate_file("")
         out = run(["git", "-C", ff, "rev-parse", "HEAD"], capture_output=True)
-        if out.returncode:
+        if out.returncode:  # pragma: no cover
             return ""
         sha = out.stdout.decode().strip()
         # exit with 1 if there are differences and 0 means no differences
         # disallow external diff drivers
         out = run(["git", "-C", ff, "diff", "--no-ext-diff", "--quiet", "--exit-code"])
-        if out.returncode:
+        if out.returncode:  # pragma: no cover
             sha += "-dirty"
         return sha
-    except Exception:
+    except Exception:  # pragma: no cover
         return ""
 
 
@@ -172,7 +172,8 @@ def get_tags() -> Dict[str, str]:
     with suppress(ImportError):
         from napari.utils.info import _sys_name
 
-        tags["platform.name"] = _sys_name()
+        if sys := _sys_name():
+            tags["system_name"] = sys
 
     with suppress(ImportError):
         import qtpy

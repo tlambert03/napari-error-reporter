@@ -31,6 +31,7 @@ __all__ = [
     "capture_message",
     "add_breadcrumb",
     "get_sample_event",
+    "get_release",
     "install_error_reporter",
     "OptInWidget",
     "settings_path",

@@ -9,6 +9,7 @@ from napari_error_reporter import (
     _save_settings,
     _util,
     ask_opt_in,
+    get_release,
     get_sample_event,
     install_error_reporter,
 )
@@ -110,3 +111,7 @@ def test_install():
         assert napari_error_reporter.INSTALLED
         install_error_reporter()
         mock.assert_called_once()
+
+
+def test_get_release_fail():
+    assert get_release("aasldkhjfas") == "UNDETECTED"
