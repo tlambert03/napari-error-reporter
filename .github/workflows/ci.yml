@@ -75,7 +75,7 @@ jobs:
             pip install -e ./napari-repo
 
         - name: Run test
-          run: python -c "from napari_error_reporter import try_get_git_sha; assert try_get_git_sha(); assert 'dirty' not in try_get_git_sha()"
+          run: python -c "from napari_error_reporter._util import try_get_git_sha; assert try_get_git_sha(); assert 'dirty' not in try_get_git_sha()"
 
         - name: Run dirty test
           run: |
