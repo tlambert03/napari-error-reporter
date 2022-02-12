@@ -49,6 +49,7 @@ def settings_path() -> Path:
 
 
 def _load_settings() -> SettingsDict:
+    """load saved settings."""
     data: SettingsDict = _DEFAULT_SETTINGS
     settings = settings_path()
     if settings.exists():
@@ -70,6 +71,7 @@ def _load_settings() -> SettingsDict:
 
 
 def _save_settings(settings: SettingsDict):
+    """Save settings dict to user space."""
     dest = settings_path()
     dest.parent.mkdir(exist_ok=True, parents=True)
     _settings = cast(dict, settings.copy())
@@ -92,7 +94,7 @@ def ask_opt_in(force=False) -> SettingsDict:
     Returns
     -------
     SettingsDict
-        [description]
+        A dict of settings (see SettingsDict class.)
     """
     settings = _load_settings()
     current_admins = _try_get_admins()
