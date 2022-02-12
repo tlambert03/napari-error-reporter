@@ -1,8 +1,11 @@
+import functools
 import os
 import platform
 from contextlib import suppress
 from datetime import datetime
-from typing import Optional, Set, TypedDict
+from importlib import metadata
+from site import getsitepackages, getusersitepackages
+from typing import Dict, Optional, Set, TypedDict
 from urllib.error import URLError
 from urllib.request import urlopen
 
@@ -13,12 +16,10 @@ try:
 except ImportError:  # pragma: no cover
     from pprint import pprint
 
-try:
-    from napari import __version__ as napari_version
-except ImportError:  # pragma: no cover
-    napari_version = "None"
 
-SENTRY_DSN = "https://a265f1a2a6254d6e8c32c3da6f75fe95@o100671.ingest.sentry.io/5894957"
+SENTRY_DSN = (
+    "https://f9d6b27849a34934bd7fe799295af690@o1142361.ingest.sentry.io/6201321"
+)
 SHOW_HOSTNAME = os.getenv("NAPARI_TELEMETRY_SHOW_HOSTNAME", "0") in ("1", "True")
 SHOW_LOCALS = os.getenv("NAPARI_TELEMETRY_SHOW_LOCALS", "1") in ("1", "True")
 DEBUG = bool(os.getenv("NAPARI_TELEMETRY_DEBUG"))
@@ -55,9 +56,55 @@ def strip_sensitive_data(event: dict, hint: dict):
     return event
 
 
+def is_editable_install(dist_name: str) -> bool:
+    """Return True if `dist` is installed as editable.
+
+    i.e: if the package isn't in site-packages or user site-packages.
+    """
+
+    dist = metadata.distribution(dist_name)
+    installed_paths = getsitepackages() + [getusersitepackages()]
+    root = str(dist.locate_file(""))
+    return all(loc not in root for loc in installed_paths)
+
+
+def git_sha(dist_name: str) -> str:
+    from subprocess import run
+
+    ff = metadata.distribution(dist_name).locate_file("")
+    out = run(["git", "-C", ff, "rev-parse", "HEAD"], capture_output=True)
+    if out.returncode:
+        return ""
+    sha = out.stdout.decode().strip()
+
+    # exit with 1 if there are differences and 0 means no differences
+    # disallow external diff drivers
+    out = run(["git", "-C", ff, "diff", "--no-ext-diff", "--quiet", "--exit-code"])
+    if out.returncode:
+        sha += "-dirty"
+    return sha
+
+
+@functools.lru_cache
+def get_release():
+    unknown = "UNDETECTED"
+    try:
+        editable = is_editable_install("napari")
+    except ModuleNotFoundError:
+        return unknown
+
+    if editable:
+        if sha := git_sha("napari"):
+            return sha
+
+    try:
+        return metadata.version("napari")
+    except ModuleNotFoundError:  # pragma: no cover
+        return unknown
+
+
 SENTRY_SETTINGS = dict(
     dsn=SENTRY_DSN,
-    release=napari_version,
     # When enabled, local variables are sent along with stackframes.
     # This can have a performance and PII impact.
     # Enabled by default on platforms where this is available.
@@ -109,7 +156,8 @@ SENTRY_SETTINGS = dict(
 )
 
 
-def _get_tags() -> dict:
+@functools.lru_cache
+def _get_tags() -> Dict[str, str]:
     tags = {"platform.system": platform.system()}
 
     with suppress(ImportError):
@@ -122,6 +170,9 @@ def _get_tags() -> dict:
 
         tags["qtpy.API_NAME"] = qtpy.API_NAME
         tags["qtpy.QT_VERSION"] = qtpy.QT_VERSION
+
+    with suppress(ModuleNotFoundError):
+        tags["editable_install"] = str(is_editable_install("napari"))
 
     return tags
 
@@ -136,6 +187,7 @@ def get_sample_event(**kwargs) -> dict:
         EVENT = event
 
     settings = SENTRY_SETTINGS.copy()
+    settings["release"] = get_release()
     settings["dsn"] = ""
     settings["transport"] = _trans
     settings.update(kwargs)
@@ -154,12 +206,11 @@ def get_sample_event(**kwargs) -> dict:
                         scope.set_tag(k, v)
                     del v, k, scope
                     hub.capture_exception()
-    try:
+
+    with suppress(KeyError, IndexError):
         # remove the mock hub from the event
         frames = EVENT["exception"]["values"][0]["stacktrace"]["frames"]  # type: ignore
         del frames[-1]["vars"]["hub"]
-    except (KeyError, IndexError):
-        pass
 
     return EVENT
 

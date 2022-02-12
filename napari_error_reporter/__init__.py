@@ -18,6 +18,7 @@ from ._util import (
     SettingsDict,
     _get_tags,
     _try_get_admins,
+    get_release,
     get_sample_event,
 )
 
@@ -138,6 +139,7 @@ def install_error_reporter():
         return
 
     _settings = SENTRY_SETTINGS.copy()
+    _settings["release"] = get_release()
     _settings["with_locals"] = settings.get("with_locals", False)
     sentry_sdk.init(**_settings)
     for k, v in _get_tags().items():
