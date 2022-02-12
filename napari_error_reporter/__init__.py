@@ -4,6 +4,7 @@ except ImportError:  # pragma: no cover
     __version__ = "unknown"
 
 import json
+import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, cast
@@ -15,10 +16,10 @@ from ._util import (
     _DEFAULT_SETTINGS,
     SENTRY_SETTINGS,
     SettingsDict,
-    _get_tags,
     _try_get_admins,
     get_release,
     get_sample_event,
+    get_tags,
 )
 
 INSTALLED = False
@@ -143,6 +144,7 @@ def install_error_reporter():
     _settings["release"] = get_release()
     _settings["with_locals"] = settings.get("with_locals", False)
     sentry_sdk.init(**_settings)
-    for k, v in _get_tags().items():
+    for k, v in get_tags().items():
         sentry_sdk.set_tag(k, v)
+    sentry_sdk.set_user({"id": uuid.getnode()})
     INSTALLED = True

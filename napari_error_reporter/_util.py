@@ -20,6 +20,7 @@ except ImportError:  # pragma: no cover
 SENTRY_DSN = (
     "https://f9d6b27849a34934bd7fe799295af690@o1142361.ingest.sentry.io/6201321"
 )
+
 SHOW_HOSTNAME = os.getenv("NAPARI_TELEMETRY_SHOW_HOSTNAME", "0") in ("1", "True")
 SHOW_LOCALS = os.getenv("NAPARI_TELEMETRY_SHOW_LOCALS", "1") in ("1", "True")
 DEBUG = bool(os.getenv("NAPARI_TELEMETRY_DEBUG"))
@@ -130,7 +131,7 @@ SENTRY_SETTINGS = dict(
     before_send=strip_sensitive_data,
     debug=DEBUG,
     # -------------------------
-    environment=platform.platform(),
+    environment=platform.system(),
     # max_breadcrumbs=DEFAULT_MAX_BREADCRUMBS,
     # shutdown_timeout=2,
     # integrations=[],
@@ -157,8 +158,8 @@ SENTRY_SETTINGS = dict(
 
 
 @functools.lru_cache
-def _get_tags() -> Dict[str, str]:
-    tags = {"platform.system": platform.system()}
+def get_tags() -> Dict[str, str]:
+    tags = {"platform.platform": platform.platform()}
 
     with suppress(ImportError):
         from napari.utils.info import _sys_name
@@ -202,7 +203,7 @@ def get_sample_event(**kwargs) -> dict:
                 1 / 0
             except Exception:
                 with sentry_sdk.push_scope() as scope:
-                    for k, v in _get_tags().items():
+                    for k, v in get_tags().items():
                         scope.set_tag(k, v)
                     del v, k, scope
                     hub.capture_exception()
