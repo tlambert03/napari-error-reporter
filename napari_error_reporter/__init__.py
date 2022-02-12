@@ -11,7 +11,6 @@ from typing import Optional, cast
 import appdirs
 import sentry_sdk
 
-from ._opt_in_widget import OptInWidget
 from ._util import (
     _DEFAULT_SETTINGS,
     SENTRY_SETTINGS,
@@ -114,6 +113,8 @@ def ask_opt_in(force=False) -> SettingsDict:
     # otherwise, update admins in the settings and show the widget
     if current_admins is not None:
         settings["admins"] = current_admins
+
+    from ._opt_in_widget import OptInWidget
 
     dlg = OptInWidget(settings=settings, admins_have_changed=admins_have_changed)
     enabled: Optional[bool] = None

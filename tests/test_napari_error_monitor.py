@@ -6,13 +6,13 @@ import pytest
 
 import napari_error_reporter
 from napari_error_reporter import (
-    OptInWidget,
     _save_settings,
     _util,
     ask_opt_in,
     get_sample_event,
     install_error_reporter,
 )
+from napari_error_reporter._opt_in_widget import OptInWidget
 
 
 @pytest.fixture(autouse=True)
