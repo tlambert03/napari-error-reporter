@@ -46,7 +46,7 @@ jobs:
         uses: codecov/codecov-action@v2
 
   test_sha:
-      name: ${{ matrix.platform }} (${{ matrix.python-version }})
+      name: Test sha ${{ matrix.platform }}
       runs-on: ${{ matrix.platform }}
       strategy:
         fail-fast: false
@@ -75,12 +75,12 @@ jobs:
             pip install -e ./napari-repo
 
         - name: Run test
-          run: python -c "from napari_error_reporter._util import try_get_git_sha; assert try_get_git_sha(); assert 'dirty' not in try_get_git_sha()"
+          run: python -c "from napari_error_reporter import try_get_git_sha; assert try_get_git_sha(); assert 'dirty' not in try_get_git_sha()"
 
         - name: Run dirty test
           run: |
             rm -rf napari-repo/resources
-            python -c "from napari_error_reporter._util import try_get_git_sha; assert 'dirty' in try_get_git_sha()"
+            python -c "from napari_error_reporter import get_release; assert 'dirty' in get_release()"
 
 
   deploy:
