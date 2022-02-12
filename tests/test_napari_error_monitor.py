@@ -1,5 +1,5 @@
 import sys
-from platform import platform
+from platform import system
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -62,7 +62,7 @@ def test_widget_admins_changed(qtbot):
 def test_example_event():
     event = get_sample_event()
     assert isinstance(event, dict)
-    assert event["environment"] == platform()
+    assert event["environment"] == system()
 
 
 @pytest.mark.parametrize("force", [True, False])
