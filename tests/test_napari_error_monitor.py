@@ -1,18 +1,19 @@
 import sys
-from platform import platform
+from platform import system
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 import napari_error_reporter
 from napari_error_reporter import (
-    OptInWidget,
     _save_settings,
     _util,
     ask_opt_in,
+    get_release,
     get_sample_event,
     install_error_reporter,
 )
+from napari_error_reporter._opt_in_widget import OptInWidget
 
 
 @pytest.fixture(autouse=True)
@@ -62,7 +63,7 @@ def test_widget_admins_changed(qtbot):
 def test_example_event():
     event = get_sample_event()
     assert isinstance(event, dict)
-    assert event["environment"] == platform()
+    assert event["environment"] == system()
 
 
 @pytest.mark.parametrize("force", [True, False])
@@ -110,3 +111,7 @@ def test_install():
         assert napari_error_reporter.INSTALLED
         install_error_reporter()
         mock.assert_called_once()
+
+
+def test_get_release_fail():
+    assert get_release("aasldkhjfas") == "UNDETECTED"

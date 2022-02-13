@@ -4,6 +4,7 @@ except ImportError:  # pragma: no cover
     __version__ = "unknown"
 
 import json
+import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, cast
@@ -11,14 +12,14 @@ from typing import Optional, cast
 import appdirs
 import sentry_sdk
 
-from ._opt_in_widget import OptInWidget
 from ._util import (
     _DEFAULT_SETTINGS,
     SENTRY_SETTINGS,
     SettingsDict,
-    _get_tags,
     _try_get_admins,
+    get_release,
     get_sample_event,
+    get_tags,
 )
 
 INSTALLED = False
@@ -30,6 +31,7 @@ __all__ = [
     "capture_message",
     "add_breadcrumb",
     "get_sample_event",
+    "get_release",
     "install_error_reporter",
     "OptInWidget",
     "settings_path",
@@ -48,6 +50,7 @@ def settings_path() -> Path:
 
 
 def _load_settings() -> SettingsDict:
+    """load saved settings."""
     data: SettingsDict = _DEFAULT_SETTINGS
     settings = settings_path()
     if settings.exists():
@@ -69,6 +72,7 @@ def _load_settings() -> SettingsDict:
 
 
 def _save_settings(settings: SettingsDict):
+    """Save settings dict to user space."""
     dest = settings_path()
     dest.parent.mkdir(exist_ok=True, parents=True)
     _settings = cast(dict, settings.copy())
@@ -91,7 +95,7 @@ def ask_opt_in(force=False) -> SettingsDict:
     Returns
     -------
     SettingsDict
-        [description]
+        A dict of settings (see SettingsDict class.)
     """
     settings = _load_settings()
     current_admins = _try_get_admins()
@@ -113,6 +117,8 @@ def ask_opt_in(force=False) -> SettingsDict:
     # otherwise, update admins in the settings and show the widget
     if current_admins is not None:
         settings["admins"] = current_admins
+
+    from ._opt_in_widget import OptInWidget
 
     dlg = OptInWidget(settings=settings, admins_have_changed=admins_have_changed)
     enabled: Optional[bool] = None
@@ -138,8 +144,10 @@ def install_error_reporter():
         return
 
     _settings = SENTRY_SETTINGS.copy()
+    _settings["release"] = get_release()
     _settings["with_locals"] = settings.get("with_locals", False)
     sentry_sdk.init(**_settings)
-    for k, v in _get_tags().items():
+    for k, v in get_tags().items():
         sentry_sdk.set_tag(k, v)
+    sentry_sdk.set_user({"id": uuid.getnode()})
     INSTALLED = True
