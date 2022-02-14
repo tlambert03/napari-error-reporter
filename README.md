@@ -429,9 +429,19 @@ box unchecked*
 
 ## Install
 
+This plugin requires napari version 0.4.15 or greater, or the `main` branch with PR
+[napari/napari#4055](https://github.com/napari/napari/pull/4055).
+
+Install via pip with:
+
 ```sh
 pip install napari-error-reporter
 ```
+
+or in the built-in plugin installer:
+
+<img width="503" alt="Untitled" src="https://user-images.githubusercontent.com/1609449/153915128-09a5e3d7-8561-4c17-b543-5ea172e3e860.png">
+
 
 Thank you!!
 
