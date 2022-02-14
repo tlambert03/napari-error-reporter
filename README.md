@@ -445,10 +445,26 @@ or in the built-in plugin installer (a restart will be required):
 
 Thank you!!
 
-## Who can see these bug reports?
+## Privacy FAQ
 
 Even with the multiple layers of opt-ins, and the attempts to wipe all personal info
 prior to sending reports, we understand that privacy is always a concern.
+
+### Do you collect personal info?
+
+We make every attempt to collect ***no*** personally identifiable information.  No
+name, location, IP address, etc...  We do collect your
+([`uuid.getnode()`](https://docs.python.org/3.10/library/uuid.html#uuid.getnode))
+As mentioned above, allowing local variables to be collected may occasionally include
+a file path in the log.  If that concerns you, please leave that unchecked.
+
+### Is this shipped with napari?
+
+`napari-error-reporter` is **not** bundled with napari or listed as a napari dependency.
+In order for reports to be sent, you must first install this plugin yourself, and then
+opt in on the next launch.  If you uninstall the plugin, no more reports can be sent.
+
+### Who can access these reports?
 
 Only the following napari core developers have access to these reports.
 If [this](https://raw.githubusercontent.com/tlambert03/napari-error-reporter/main/ADMINS)
@@ -457,7 +473,14 @@ list changes in the future, you will be asked to opt-in again in napari:
 - Juan Nunez-Iglesias ([@jni](https://github.com/jni))
 - Talley Lambert ([@tlambert03](https://github.com/tlambert03))
 
-Any napari github issues resulting from bug reports will be manually purged of
-file paths and local variables.
-
 *This plugin is **not** associated with the Chan Zuckerberg Initiative*.
+
+### How will these reports be used?
+
+Commonly occuring errors will be will be manually purged of file paths and
+local variables and posted to https://github.com/napari/napari/issues
+
+### How long is data retained
+
+Sentry retains event data for 90 days by default.  For complete details,
+see Sentry's page on [Security & Compliance](https://sentry.io/security/)
