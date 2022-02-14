@@ -454,9 +454,10 @@ prior to sending reports, we understand that privacy is always a concern.
 
 We make every attempt to collect ***no*** personally identifiable information.  No
 name, location, IP address, etc...  We do collect your
-([`uuid.getnode()`](https://docs.python.org/3.10/library/uuid.html#uuid.getnode))
-As mentioned above, allowing local variables to be collected may occasionally include
-a file path in the log.  If that concerns you, please leave that unchecked.
+([`uuid.getnode()`](https://docs.python.org/3.10/library/uuid.html#uuid.getnode)) to
+be able to track bug resolution over time. As mentioned above, allowing local
+variables to be collected may occasionally include a file path in the log.
+If that concerns you, please leave that unchecked.
 
 ### Is this shipped with napari?
 
