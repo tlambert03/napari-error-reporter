@@ -438,7 +438,7 @@ Install via pip with:
 pip install napari-error-reporter
 ```
 
-or in the built-in plugin installer:
+or in the built-in plugin installer (a restart will be required):
 
 <img width="503" alt="Untitled" src="https://user-images.githubusercontent.com/1609449/153915128-09a5e3d7-8561-4c17-b543-5ea172e3e860.png">
 
