@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/tlambert03/napari-error-reporter/tree/0.3.1) (2022-06-21)
+
+[Full Changelog](https://github.com/tlambert03/napari-error-reporter/compare/v0.3.0...0.3.1)
+
+**Implemented enhancements:**
+
+- build: add npe2 manifest [\#5](https://github.com/tlambert03/napari-error-reporter/pull/5) ([tlambert03](https://github.com/tlambert03))
+
 ## [v0.3.0](https://github.com/tlambert03/napari-error-reporter/tree/v0.3.0) (2022-02-13)
 
 [Full Changelog](https://github.com/tlambert03/napari-error-reporter/compare/v0.2.1...v0.3.0)
